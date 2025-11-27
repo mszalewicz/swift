@@ -1,3 +1,5 @@
+import Dispatch
+
 /*
 
 TODO:
@@ -26,7 +28,7 @@ class Solution {
         let maxSize = max(chars1.count, chars2.count)
         var output = ""
 
-        for i in 0 ..< maxSize {
+        for i in 0..<maxSize {
             if i < chars1.count { output.append(chars1[i]) }
             if i < chars2.count { output.append(chars2[i]) }
         }
@@ -38,12 +40,10 @@ class Solution {
         precondition(1 <= word1.count && word1.count <= 100)
         precondition(1 <= word2.count && word2.count <= 100)
 
-
-
         let maxSize = max(word1.count, word2.count)
         var output = ""
 
-        for i in 0 ..< maxSize {
+        for i in 0..<maxSize {
             if i < word1.count { output.append(word1[word1.index(word1.startIndex, offsetBy: i)]) }
             if i < word2.count { output.append(word2[word2.index(word2.startIndex, offsetBy: i)]) }
         }
@@ -54,20 +54,26 @@ class Solution {
 
 func runTests() {
     let testCases: [(String, String, String)] = [
-            ("abc", "pqr", "apbqcr"),
-            ("ab", "pqrs", "apbqrs"),
-            ("abcd", "pq", "apbqcd"),
-        ]
+        ("abc", "pqr", "apbqcr"),
+        ("ab", "pqrs", "apbqrs"),
+        ("abcd", "pq", "apbqcd"),
+    ]
 
     for (word1, word2, result) in testCases {
-        precondition(Solution.mergeAlternately(word1, word2) == result, "word1: \(word1), word2: \(word2), result: \(result)")
+        precondition(
+            Solution.mergeAlternately(word1, word2) == result,
+            "word1: \(word1), word2: \(word2), result: \(result)")
     }
 
     for (word1, word2, result) in testCases {
-        precondition(Solution.mergeAlternately2(word1, word2) == result, "word1: \(word1), word2: \(word2), result: \(result)")
+        precondition(
+            Solution.mergeAlternately2(word1, word2) == result,
+            "word1: \(word1), word2: \(word2), result: \(result)")
     }
 
+    print("------------------------------------")
     print("Tests passed.")
+    print("------------------------------------")
 }
 
 runTests()
@@ -79,4 +85,51 @@ NOTES:
     - Unfortunately did not find solution without branch predictions (confirmed with godbolt).
     - Testing done inline as standard package init workflow with Tests is overkill for LeetCode single functions.
       Precondition is not ideal form for testing as it is unnecessarly verbose, but it gets the job done.
+*/
+
+// Additional dummy benchmarking to learn about swifts inner working with regards to performance when casting into Arrays and String indexing.
+
+func runBenchmarks(function: (String, String) -> String, name: String) {
+
+    let testCases: [(String, String, String)] = [
+        ("abc", "pqr", "apbqcr"),
+        ("ab", "pqrs", "apbqrs"),
+        ("abcd", "pq", "apbqcd"),
+    ]
+
+    let start = DispatchTime.now()
+
+    for _ in 1...10000 {
+        for (word1, word2, result) in testCases {
+            assert(function(word1, word2) == result)
+        }
+    }
+
+    let end = DispatchTime.now()
+
+    let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
+    let timeInterval = Double(nanoTime) / 1_000_000_000
+
+    print("Function tested: \(name)")
+    print("Elapsed: \(timeInterval) seconds")
+    print("------------------------------------")
+}
+
+runBenchmarks(function: Solution.mergeAlternately(_:_:), name: "mergeAlternately")
+runBenchmarks(function: Solution.mergeAlternately2(_:_:), name: "mergeAlternately2")
+
+/*
+
+NOTES:
+    - Perfomance in both cases in comparable in such trivial benchmark test.
+    - When order of function version execution is swaped, every time function benchmarked first is a little bit slower.
+
+    Execution averaged over multiple runs, with different function execution order:
+
+    mergeAlternately  : 0.0552190277 s
+    mergeAlternately2 : 0.0601847779 s
+
+    mergeAlternately  : 0.0650843084 s
+    mergeAlternately2 : 0.0519591498 s
+
 */
