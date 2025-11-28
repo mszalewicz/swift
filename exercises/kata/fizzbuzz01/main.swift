@@ -14,7 +14,7 @@ if args.count != 2 {
 }
 
 guard let number = Int(CommandLine.arguments[1]) else {
-    print("Passed argument is not a valid integer. Exiting.")
+    print("Passed argument is not a valid integer.\nExiting.")
     exit(1)
 }
 

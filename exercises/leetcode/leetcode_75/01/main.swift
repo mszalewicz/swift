@@ -71,9 +71,9 @@ func runTests() {
             "word1: \(word1), word2: \(word2), result: \(result)")
     }
 
-    print("------------------------------------")
+    separator()
     print("Tests passed.")
-    print("------------------------------------")
+    separator()
 }
 
 runTests()
@@ -98,8 +98,9 @@ func runBenchmarks(function: (String, String) -> String, name: String) {
     ]
 
     let start = DispatchTime.now()
+    let iterations = 10000
 
-    for _ in 1...10000 {
+    for _ in 1...iterations {
         for (word1, word2, result) in testCases {
             assert(function(word1, word2) == result)
         }
@@ -108,11 +109,11 @@ func runBenchmarks(function: (String, String) -> String, name: String) {
     let end = DispatchTime.now()
 
     let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
-    let timeInterval = Double(nanoTime) / 1_000_000_000
+    let averageTimeInterval = (Double(nanoTime) / 1_000_000_000) / Double(iterations)
 
     print("Function tested: \(name)")
-    print("Elapsed: \(timeInterval) seconds")
-    print("------------------------------------")
+    print("Average time execution: \(averageTimeInterval) s")
+    separator()
 }
 
 runBenchmarks(function: Solution.mergeAlternately(_:_:), name: "mergeAlternately")
@@ -133,3 +134,9 @@ NOTES:
     mergeAlternately2 : 0.0519591498 s
 
 */
+
+func separator() {
+    print()
+    print(String(repeating: "-", count: 60))
+    print()
+}
