@@ -24,4 +24,3 @@ for (key, value) in mapping {
     }
 }
 
-print()
