@@ -28,29 +28,40 @@ for y in 0..<maxY {
 
 let MAX_NEIGHBOURS = 4
 var result = 0
+var coordinatesToRemove = Set<Coordinate>()
 
-search: for coordinate in validCoordinates {
-    var countNeighbours = 0
+repeat {
+    coordinatesToRemove.removeAll()
 
-    for neighbour in [
-        coordinate + Coordinate(y: 0, x: -1),
-        coordinate + Coordinate(y: 0, x: 1),
-        coordinate + Coordinate(y: -1, x: 0),
-        coordinate + Coordinate(y: 1, x: 0),
-        coordinate + Coordinate(y: -1, x: -1),
-        coordinate + Coordinate(y: 1, x: -1),
-        coordinate + Coordinate(y: -1, x: 1),
-        coordinate + Coordinate(y: 1, x: 1),
-    ] {
-        if validCoordinates.contains(neighbour) {
-            if countNeighbours == MAX_NEIGHBOURS - 1 {
-                continue search
+    search: for coordinate in validCoordinates {
+        var countNeighbours = 0
+
+        for neighbour in [
+            coordinate + Coordinate(y: 0, x: -1),
+            coordinate + Coordinate(y: 0, x: 1),
+            coordinate + Coordinate(y: -1, x: 0),
+            coordinate + Coordinate(y: 1, x: 0),
+            coordinate + Coordinate(y: -1, x: -1),
+            coordinate + Coordinate(y: 1, x: -1),
+            coordinate + Coordinate(y: -1, x: 1),
+            coordinate + Coordinate(y: 1, x: 1),
+        ] {
+            if validCoordinates.contains(neighbour) {
+                if countNeighbours == MAX_NEIGHBOURS - 1 {
+                    continue search
+                }
+                countNeighbours += 1
             }
-            countNeighbours += 1
         }
+
+        result += 1
+        coordinatesToRemove.insert(coordinate)
     }
 
-    result += 1
-}
+    for toBeRemoved in coordinatesToRemove {
+        validCoordinates.remove(toBeRemoved)
+    }
+} while !coordinatesToRemove.isEmpty
+
 
 print(result)
