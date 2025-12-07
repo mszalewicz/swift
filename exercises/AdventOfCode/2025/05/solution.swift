@@ -79,4 +79,12 @@ for value in checkValuesPart.split(whereSeparator: \.isNewline) {
     }
 }
 
+var part2 = 0
+
+for range in ranges {
+    part2 += range.max - range.min + 1
+}
+
+
 print("Part 1:", part1)
+print("Part 2:", part2)
