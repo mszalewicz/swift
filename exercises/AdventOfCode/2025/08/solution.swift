@@ -80,15 +80,15 @@ while coordinates.count != 1 {
 distances.sort()
 
 var id: UInt64 = 1
-let MAXCONNECTIONS = 1000
+let MAXCONNECTIONS = 999
 
 for (connection, distance) in distances.enumerated() {
-    if connection == MAXCONNECTIONS { break }
+    var checkDone = false
 
     let isCoordinateXInCircuit = coordinatesInCircuits.keys.contains(distance.coordinateX.name)
     let isCoordinateYInCircuit = coordinatesInCircuits.keys.contains(distance.coordinateY.name)
 
-    if !isCoordinateXInCircuit && !isCoordinateYInCircuit {
+    if !isCoordinateXInCircuit && !isCoordinateYInCircuit && checkDone == false {
         let circuitIdentifier = id
         id += 1
 
@@ -96,21 +96,21 @@ for (connection, distance) in distances.enumerated() {
         coordinatesInCircuits[distance.coordinateY.name] = circuitIdentifier
 
         circuits[circuitIdentifier] = 2
-        continue
+        checkDone = true
     }
 
-    if isCoordinateXInCircuit && isCoordinateYInCircuit {
+    if isCoordinateXInCircuit && isCoordinateYInCircuit && checkDone == false {
         if coordinatesInCircuits[distance.coordinateX.name]
             == coordinatesInCircuits[distance.coordinateY.name]
         {
-            continue
+            checkDone = true
         } else {
 
             let leftSet = coordinatesInCircuits[distance.coordinateX.name]!
             let rightSet = coordinatesInCircuits[distance.coordinateY.name]!
 
             for key in coordinatesInCircuits.keys {
-                if coordinatesInCircuits[key] ==  rightSet {
+                if coordinatesInCircuits[key] == rightSet {
                     coordinatesInCircuits[key] = leftSet
                 }
             }
@@ -118,33 +118,40 @@ for (connection, distance) in distances.enumerated() {
             circuits[leftSet]! += circuits[rightSet]!
             circuits.removeValue(forKey: rightSet)
 
-            continue
+            checkDone = true
         }
     }
 
-    if isCoordinateXInCircuit {
+    if isCoordinateXInCircuit && checkDone == false {
         let circuitIdentifier = coordinatesInCircuits[distance.coordinateX.name]
         coordinatesInCircuits[distance.coordinateY.name] = circuitIdentifier
         circuits[circuitIdentifier!]! += 1
 
-        continue
+        checkDone = true
     }
 
-    if isCoordinateYInCircuit {
+    if isCoordinateYInCircuit && checkDone == false {
         let circuitIdentifier = coordinatesInCircuits[distance.coordinateY.name]
         coordinatesInCircuits[distance.coordinateX.name] = circuitIdentifier
         circuits[circuitIdentifier!]! += 1
 
-        continue
+        checkDone = true
+    }
+
+
+    if connection == MAXCONNECTIONS {
+        var solution1 = 1
+
+        for relevant in (circuits.sorted { $1.value < $0.value }).prefix(3) {
+            solution1 *= relevant.value
+        }
+
+        print("Solution 1:", solution1)
+
+    }
+
+    if circuits.first!.value == 1000 {
+        print("Solution 2:", Int(distance.coordinateX.X * distance.coordinateY.X))
+        break
     }
 }
-
-let sorted = circuits.sorted { $1.value < $0.value }
-
-var solution1 = 1
-
-for relevant in (circuits.sorted { $1.value < $0.value }).prefix(3) {
-    solution1 *= relevant.value
-}
-
-print(solution1)
