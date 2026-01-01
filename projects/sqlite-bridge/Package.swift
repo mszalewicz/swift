@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "sqlite-bridge",
+    platforms: [
+            .macOS(.v10_15)  // or higher
+        ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -18,7 +21,10 @@ let package = Package(
         .target(
             name: "CSQLite",
             path: "Sources/CSQLite",
-            publicHeadersPath: "."
+            publicHeadersPath: ".",
+            cSettings: [
+                .unsafeFlags(["-Wno-ambiguous-macro"])
+            ]
         ),
         .target(
             name: "sqlite-bridge",
