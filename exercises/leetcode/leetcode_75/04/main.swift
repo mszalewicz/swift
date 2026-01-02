@@ -80,11 +80,14 @@ func tests() {
     ]
 
     for (i, (flowerbed, n, expected)) in tests.enumerated() {
-        let result = Solution.canPlaceFlowers(flowerbed, n)
-        if result != expected {
-            print("Test \(i+1) failed: expected = \(expected), got = \(result)")
-        } else {
+        let computed = Solution.canPlaceFlowers(flowerbed, n)
+        let passed = (computed == expected)
+
+        switch passed {
+        case true:
             print("Test \(i+1) successful")
+        case false:
+            print("Test \(i+1) failed: expected = \(expected), got = \(computed)")
         }
     }
 }
