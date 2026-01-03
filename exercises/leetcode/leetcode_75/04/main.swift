@@ -29,14 +29,6 @@ Constraints:
 
 class Solution {
     static func canPlaceFlowers(_ flowerbed: [Int], _ n: Int) -> Bool {
-        if flowerbed.count == 0 {
-            return false
-        }
-
-        if flowerbed.count == 1 && flowerbed[0] == 0 && n == 1 {
-            return true
-        }
-
         var plantable = 0
         var previousPlanted = Int.min
 
